@@ -50,13 +50,17 @@ public class bank1 {
 	public static void displayDetails()
 	{
 		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter account number: ");
 		String acc=sc.next();
 		Connection con=null;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Employee","root","Pass@123");
-			Statement smt=con.createStatement();
-			ResultSet rs=smt.executeQuery("select * from register where accnt=acc");
+			PreparedStatement ps=con.prepareStatement("select * from register where accnt=?");
+			ps.setString(1, acc);
+			
+			ResultSet rs=ps.executeQuery();
+			
 			while(rs.next())
 			{
 				System.out.println(rs.getString(1)+":"+rs.getInt(2)+":"+ rs.getInt(3)+":"+rs.getInt(4)+":"+rs.getString(5));
@@ -84,7 +88,7 @@ public class bank1 {
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Employee","root","Pass@123");
-		PreparedStatement ps = con.prepareStatement("select * from register where account=?");
+		PreparedStatement ps = con.prepareStatement("select * from register where accnt=?");
 		
 		ps.setString(1, send1);
 		ResultSet rs=ps.executeQuery();
@@ -93,7 +97,7 @@ public class bank1 {
 		
 		//System.out.println(x);
 		
-		PreparedStatement ps2 = con.prepareStatement("select * from register where account=?");
+		PreparedStatement ps2 = con.prepareStatement("select * from register where accnt=?");
 		ps2.setString(1, rece1);
 		ResultSet rs1=ps2.executeQuery();
 		while(rs1.next())
@@ -102,14 +106,14 @@ public class bank1 {
 		if(x>=amtt)                         //"update bankAcc set money=? where name=name1"
 		{
 			x=x-amtt;
-			PreparedStatement ps1 = con.prepareStatement("update register set balance=? where account=?");
+			PreparedStatement ps1 = con.prepareStatement("update register set balance=? where accnt=?");
 			ps1.setInt(1, x);
 			ps1.setString(2, send1);
 			ps1.execute();
 			
 			
 			
-			PreparedStatement ps3 = con.prepareStatement("update register set balance=? where account=?");
+			PreparedStatement ps3 = con.prepareStatement("update register set balance=? where accnt=?");
 			ps3.setInt(1, x1+amtt );
 			ps3.setString(2, rece1);
 			ps3.execute();
